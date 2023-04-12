@@ -1,0 +1,161 @@
+<!-- Page content -->
+<div class="container">
+  <!-- Page form start -->
+  <form [formGroup]="formOrder">
+    <mat-card class="order-card">
+        <mat-card-header class="order-card">
+          <div mat-card-avatar class="order-header-image"></div>
+          <mat-card-title><a><b>N° Pedido:</b></a></mat-card-title>
+          <mat-card-subtitle> 01184018 </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="order-card">
+          <!--{{ formOrder.get('note')?.value }}-->
+          <p><b>Codigo Cliente:</b><br> 900818921-1259283
+            <br><b>Nombre Cliente:</b><br> PE - KOPPS COMERCIAL SAS- SIBERIA
+            <br><b>Detalle del Pedido:</b><br> CIL 18 KG MONTACARGA</p>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Start form units array with first row must and dynamically add more -->
+    <mat-card formArrayName="detailsOrder">
+      <mat-card-content>
+        <mat-card-title></mat-card-title>
+        <mat-card-subtitle>Datos Confirmacion Entrega</mat-card-subtitle>
+
+        <!-- loop throught details orders -->
+        <div *ngFor="let lineOrder of getControls(); let i=index">
+          <!-- row divider show for every nex row exclude if first row -->
+          <mat-divider *ngIf="formOrder.get('detailsOrder')?.controls.length > 1 && i > 0"></mat-divider><br />
+
+          <!-- group name in this case row index -->
+          <div [formGroupName]="i">
+            <!--<div fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="3.5%" fxLayoutAlign="center">-->
+            <div fxLayout="row" fxLayout.lt-sm="column" fxFlexFill fxLayoutGap="16px" fxLayoutAlign="center">
+              <!-- details order product select field -->
+              <mat-form-field fxFlex="12%">
+                <mat-select formControlName="productsPriceId" placeholder="Ref" required>
+                  <mat-option>-- Ninguno --</mat-option>
+                  <mat-option *ngFor="let price of listPrice" [value]="price.idPriceService">{{ price.product.name + ' '
+                    + price.product.typeTurn.nameTurn }}</mat-option>
+                </mat-select>
+                <!-- select field error -->
+                <mat-error>
+                  Requiere producto.
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field fxFlex="12%" fxFlex.xs="10">
+                <mat-label>Codigo</mat-label>
+                <input matInput placeholder="Codigo" formControlName="startTime"
+                  required>
+                <!-- select field error -->
+                <mat-error >
+                  Requiere Codigo.
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field fxFlex="8%" fxFlex.xs="10">
+                <mat-label>Cant</mat-label>
+                <input matInput placeholder="Cant" formControlName="endTime" required>
+                <!-- select field error -->
+                <mat-error>
+                  Requiere Cantidad.
+                </mat-error>
+              </mat-form-field>
+
+              <!-- unit quantity input field -->
+              <mat-form-field fxFlex="8%" fxFlex.xs="grow">
+                <input matInput placeholder="Peso" type="number" formControlName="extraTime" required />
+              </mat-form-field>
+
+              <div fxFlex="10%" fxFlex.xs="grow">
+                <button type="button" mat-icon-button color="warn" fxFlex="nogrow"
+                  *ngIf="formOrder.get('detailsOrder')?.controls.length > 1" matTooltip="Eliminar Linea">
+                  <mat-icon>delete forever</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- New unit button
+        <div fxLayout="row" fxFlexFill fxLayout.lt-sm="column" fxLayoutGap="16px">
+          <button type="button" mat-raised-button color="primary" matTooltip="Agregar Nueva linea a la Orden">
+            <mat-icon>add box</mat-icon>
+          </button>
+
+
+        </div> -->
+
+      </mat-card-content>
+
+      <!-- End form units array -->
+      <br />
+      <br />
+      <!-- Total price calculation formated with angular currency pipe -->
+      <div>
+        <mat-label>Total Orden {{ totalSum | currency:'USD':'symbol-narrow':'1.2-2'}}</mat-label>
+      </div>
+      <div>
+        <mat-card-actions fxFlexAlign="end" align="end">
+          <button [disabled]="formOrder.invalid" mat-raised-button class="mat-success" type="submit" color="primary"
+            matTooltip="Guardar">
+            <mat-icon>save</mat-icon>
+            <span>Guardar</span>
+          </button>
+          <button routerLink="/admin/orders/list" mat-raised-button color="warn" matTooltip="Cancelar">
+            <mat-icon>cancel</mat-icon>
+            <span>Cancelar</span>
+          </button>
+                  <!-- floating capture button -->
+<div class="dialog_scrim" *ngIf="openMenu">
+</div>
+
+<button mat-fab color="accent" (click)="clickMenu()"
+    class="menu-button"
+    [class.mat-elevation-z2]="!isOver"
+    [class.mat-elevation-z8]="isOver"
+    (mouseover)="isOver = true"
+    (mouseleave)="isOver = false">
+  <i class="material-icons" *ngIf="!openMenu">add</i>
+  <i class="material-icons" *ngIf="openMenu">close</i>
+</button>
+
+<!-- menu button -->
+<button mat-mini-fab
+  class="action-button one mat-elevation-z8"
+  *ngIf="openMenu"
+  color="basic"
+  (click)="hello( 'button one')">
+  <i class="material-icons">qr_code_scanner</i>
+</button>
+
+<button mat-raised-button
+  class="label labelone mat-elevation-z8"
+  *ngIf="openMenu"
+  color="basic"
+  (click)="hello('button one')">
+  Digitalizar
+</button>
+
+<button mat-mini-fab
+  class="action-button two mat-elevation-z8"
+  *ngIf="openMenu"
+  color="basic"
+  (click)="hello('button two')">
+  <i class="material-icons">edit_note</i>
+</button>
+<button mat-raised-button
+  class="label labeltwo mat-elevation-z8"
+  *ngIf="openMenu"
+  color="basic"
+  (click)="hello('button two')">
+  Manual
+</button>
+<!-- end floating capture button -->
+        </mat-card-actions>
+      </div>
+    </mat-card>
+  </form>
+  <!-- Page form end -->
+</div>
