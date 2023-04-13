@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 
-import { DashboardComponent } from './dashboard.component';
+import { OrderConfirmComponent } from './order-confirm/order-confirm.component';
 
 export const DashboardRoutes: Routes = [{
   path: '',
-  component: DashboardComponent
+  component: OrderConfirmComponent
 }];

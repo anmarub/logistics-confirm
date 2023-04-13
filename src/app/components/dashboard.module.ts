@@ -5,15 +5,16 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
 
-import { DemoMaterialModule } from '../demo-material-module';
-import { DashboardComponent } from './dashboard.component';
+import { MaterialModule } from '../material-module';
+import { OrderConfirmComponent } from './order-confirm/order-confirm.component';
 import { DashboardRoutes } from './dashboard.routing';
 
 @NgModule({
   imports: [
     CommonModule,
-    DemoMaterialModule,
+    MaterialModule,
     FlexLayoutModule,
     HttpClientModule,
     FormsModule,
@@ -22,7 +23,7 @@ import { DashboardRoutes } from './dashboard.routing';
     RouterModule.forChild(DashboardRoutes)
   ],
   declarations: [
-    DashboardComponent
+    OrderConfirmComponent
   ],
   providers: [
     CurrencyPipe,

@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { forkJoin, from, Observable, ReplaySubject, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, forkJoin, from, Observable, ReplaySubject, Subject, Subscription } from 'rxjs';
 
 import { switchMap } from 'rxjs/operators';
 import { MatSelect } from '@angular/material/select';
@@ -15,12 +15,12 @@ import { take, takeUntil } from 'rxjs/operators';
 import { MultiFormatReader, BarcodeFormat } from '@zxing/library'
 
 @Component({
-	selector: 'app-dashboard',
-	templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+	selector: 'app-order-confirm',
+	templateUrl: './order-confirm.component.html',
+  styleUrls: ['./order-confirm.component.scss']
 })
-export class DashboardComponent implements AfterViewInit {
-
+export class OrderConfirmComponent implements AfterViewInit {
+  // https://stackblitz.com/edit/zxing-ngx-scanner?file=projects%2Fzxing-scanner-demo%2Fsrc%2Fapp%2Fapp.component.ts
   private readonly subscriptions: Subscription[] = [];
   public defaultTime = [new Date().getHours(), 0 , 0];
   filteredListCustomers = []
@@ -30,6 +30,12 @@ export class DashboardComponent implements AfterViewInit {
   /** control for the MatSelect filter keyword */
   public customerFilterCtrl: FormControl = new FormControl();
   protected onDestroy = new Subject<void>();
+
+  title = 'qr-reader';
+  public cameras:MediaDeviceInfo[]=[];
+  public myDevice!: MediaDeviceInfo;
+  public scannerEnabled=false;
+  public results:string[]=[];
 
 
   // create form with validators and dynamic rows array
@@ -77,6 +83,26 @@ export class DashboardComponent implements AfterViewInit {
   ngAfterViewInit(): void {
   }
 
+
+  camerasFoundHandler(cameras: MediaDeviceInfo[]){
+    this.cameras=cameras;
+    this.selectCamera(this.cameras[0].label);
+  }
+
+  scanSuccessHandler(event:string){
+    console.log(event);
+    this.results.unshift(event);
+  }
+
+  selectCamera(cameraLabel: string){
+    this.cameras.forEach(camera=>{
+      if(camera.label.includes(cameraLabel)){
+        this.myDevice=camera;
+        console.log(camera.label);
+        this.scannerEnabled=true;
+      }
+    })
+  }
 
   clickMenu(){
     this.openMenu = !this.openMenu;
