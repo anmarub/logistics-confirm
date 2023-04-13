@@ -12,7 +12,8 @@ import { BehaviorSubject, forkJoin, from, Observable, ReplaySubject, Subject, Su
 import { switchMap } from 'rxjs/operators';
 import { MatSelect } from '@angular/material/select';
 import { take, takeUntil } from 'rxjs/operators';
-import { MultiFormatReader, BarcodeFormat } from '@zxing/library'
+
+import { OrderConfirmQrComponent } from '../order-confirm-qr/order-confirm-qr.component'
 
 @Component({
 	selector: 'app-order-confirm',
@@ -20,7 +21,7 @@ import { MultiFormatReader, BarcodeFormat } from '@zxing/library'
   styleUrls: ['./order-confirm.component.scss']
 })
 export class OrderConfirmComponent implements AfterViewInit {
-  // https://stackblitz.com/edit/zxing-ngx-scanner?file=projects%2Fzxing-scanner-demo%2Fsrc%2Fapp%2Fapp.component.ts
+
   private readonly subscriptions: Subscription[] = [];
   public defaultTime = [new Date().getHours(), 0 , 0];
   filteredListCustomers = []
@@ -30,12 +31,6 @@ export class OrderConfirmComponent implements AfterViewInit {
   /** control for the MatSelect filter keyword */
   public customerFilterCtrl: FormControl = new FormControl();
   protected onDestroy = new Subject<void>();
-
-  title = 'qr-reader';
-  public cameras:MediaDeviceInfo[]=[];
-  public myDevice!: MediaDeviceInfo;
-  public scannerEnabled=false;
-  public results:string[]=[];
 
 
   // create form with validators and dynamic rows array
@@ -55,6 +50,7 @@ export class OrderConfirmComponent implements AfterViewInit {
   // Observable for formArray value changes
   formValueChanges$: Observable<FormArray> =
     this.formOrder.controls.detailsOrder.valueChanges;
+
 
   constructor(
     private currencyPipe: CurrencyPipe,
@@ -83,33 +79,28 @@ export class OrderConfirmComponent implements AfterViewInit {
   ngAfterViewInit(): void {
   }
 
-
-  camerasFoundHandler(cameras: MediaDeviceInfo[]){
-    this.cameras=cameras;
-    this.selectCamera(this.cameras[0].label);
-  }
-
-  scanSuccessHandler(event:string){
-    console.log(event);
-    this.results.unshift(event);
-  }
-
-  selectCamera(cameraLabel: string){
-    this.cameras.forEach(camera=>{
-      if(camera.label.includes(cameraLabel)){
-        this.myDevice=camera;
-        console.log(camera.label);
-        this.scannerEnabled=true;
-      }
-    })
-  }
-
   clickMenu(){
     this.openMenu = !this.openMenu;
   }
 
   hello(mex: string){
       alert('Hello '+mex+'!' );
+  }
+
+  scanCodeQr(): void {
+    this.dialog.open(OrderConfirmQrComponent, {disableClose: true})
+    .afterClosed()
+    .pipe(take(1), takeUntil(this.onDestroy))
+    .subscribe({
+      next: (object) => {
+        console.log(object);
+      },
+      error: (err) => {
+        console.error(err);
+      },
+      complete: () => {}
+    });
+    this.openMenu = false;
   }
 
   /**

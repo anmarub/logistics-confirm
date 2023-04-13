@@ -14,7 +14,7 @@
             "allowedCommonJsDependencies": [
               "rxjs-compat",
               "rxjs",
-              "hammerjs"           
+              "hammerjs"
             ],
             "outputPath": "dist",
             "index": "src/index.html",
@@ -23,7 +23,12 @@
             "polyfills": "src/polyfills.ts",
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              {
+                "glob": "**/*",
+                "input": "node_modules/ngx-scanner-qrcode/wasm/",
+                "output": "./assets/wasm/"
+              }
             ],
             "styles": [
               "src/styles.css",
@@ -87,7 +92,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "scripts": [
-              
+
             ],
             "styles": [
               "src/styles.css",

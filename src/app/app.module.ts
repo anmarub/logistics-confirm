@@ -14,7 +14,7 @@ import { AppHeaderComponent } from './layouts/full/header/header.component';
 import { AppSidebarComponent } from './layouts/full/sidebar/sidebar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material-module';
-import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
 
 import { SharedModule } from './shared/shared.module';
 import { SpinnerComponent } from './shared/spinner.component';
@@ -35,7 +35,7 @@ import { SpinnerComponent } from './shared/spinner.component';
     FlexLayoutModule,
     HttpClientModule,
     SharedModule,
-    ZXingScannerModule,
+    NgxScannerQrcodeModule,
     RouterModule.forRoot(AppRoutes)
   ],
   providers: [

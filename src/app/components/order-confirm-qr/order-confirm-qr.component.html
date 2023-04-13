@@ -1,0 +1,54 @@
+<div class="container">
+  <form>
+    <mat-card>
+  <!-- devices -->
+  <div class="row">
+    <mat-form-field>
+      <mat-select (ngModelChange)="action.playDevice($event)" class="form-select form-select-sm">
+        <mat-option value="null" selected>Select device</mat-option>
+        <mat-option *ngFor="let c of action.devices.value; let i = index" value="c.deviceId" selected="i == action.deviceActive">{{c.label}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select (ngModelChange)="action.decode = $event" class="form-select form-select-sm">
+        <mat-option value="utf-8" selected="action.decode == 'utf-8'">UTF-8</mat-option>
+        <mat-option value="iso-8859-15" selected="action.decode == 'iso-8859-15'">ISO-8859-15</mat-option>
+        <mat-option value="windows-1252" selected="action.decode == 'windows-1252'">Windows-1252</mat-option>
+        <mat-option value="macintosh" selected="action.decode == 'macintosh'">Macintosh</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- ngx-scanner-qrcode -->
+  <ngx-scanner-qrcode #action="scanner" [config]="config" (event)="onEvent($event)"></ngx-scanner-qrcode>
+
+  <!-- data  -->
+  <!-- <p class="data">{{ (action.data | async | json) }}</p> -->
+
+  <!-- loading -->
+  <p *ngIf="action.isLoading">⌛ Loading...</p>
+
+  <!-- start/stop -->
+  <button class="btn" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart" [disabled]="action.isLoading" (click)="handle(action, action.isStart ? 'stop' : 'start')">
+    <img [src]="action.isStart ? 'https://id1945.github.io/images/svg/camera-off.svg' : 'https://id1945.github.io/images/svg/camera-on.svg'" width="30px"/>
+  </button>
+
+  <!-- play/pause
+  <button class="btn" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart" [disabled]="!action.isStart" (click)="handle(action, action.isPause ? 'play' : 'pause')">
+    <img [src]="action.isPause ? 'https://id1945.github.io/images/svg/play.svg': 'https://id1945.github.io/images/svg/pause.svg'" width="30px"/>
+  </button> -->
+
+    <!-- isTorch -->
+  <button class="btn" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart" [disabled]="!action.isStart" (click)="action.isTorch = !action.isTorch; handle(action, 'torcher')">
+    <img [src]="action.isTorch ? 'https://id1945.github.io/images/svg/flash-off.svg' : 'https://id1945.github.io/images/svg/flash-on.svg'" width="30px"/>
+  </button>
+
+  <!-- download
+  <button class="btn" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart" [disabled]="!action.isStart" (click)="handle(action, 'download')">
+    <img src="https://id1945.github.io/images/svg/capture.svg" width="30px"/>
+  </button>-->
+  <br>
+</mat-card>
+</form>
+</div>
