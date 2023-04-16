@@ -8,7 +8,6 @@
   font-size: 12px;
 }
 
-
 .order-card {
   font-size: 0.75rem;
   padding: 6px 10px;
@@ -48,6 +47,7 @@
   right: 2rem;
   transition-property: opacity;
 }
+
 .label{
   position: fixed;
   right: 5rem;
@@ -66,6 +66,7 @@
   bottom: 6rem;
   animation: moveOne 0.2s;
 }
+
 .labelone{
   bottom: 6.5rem;
   animation: moveOneLabel 0.2s;
@@ -75,6 +76,7 @@
   bottom: 9.5rem;
   animation: moveTwo 0.25s;
 }
+
 .labeltwo{
   bottom: 10rem;
   animation: moveTwoLabel 0.25s;

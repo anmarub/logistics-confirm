@@ -13,7 +13,7 @@ export const AppRoutes: Routes = [
         pathMatch: 'full'
       },
       {
-        path: 'dashboard',
+        path: 'montacargas',
         loadChildren: () => import('./components/dashboard.module').then(m => m.DashboardModule)
       }
     ]

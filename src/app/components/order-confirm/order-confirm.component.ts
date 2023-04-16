@@ -88,7 +88,7 @@ export class OrderConfirmComponent implements AfterViewInit {
   }
 
   scanCodeQr(): void {
-    this.dialog.open(OrderConfirmQrComponent, {disableClose: true})
+    this.dialog.open(OrderConfirmQrComponent, {panelClass: 'custom-dialog-container', disableClose: true})
     .afterClosed()
     .pipe(take(1), takeUntil(this.onDestroy))
     .subscribe({
