@@ -1,3 +1,7 @@
+.container {
+  position: relative;
+}
+
 /* Absolute Center Spinner */
 .loading-indicator {
   position: fixed;
@@ -26,7 +30,7 @@
 
 
 .mat-card {
-  margin: 0 0px 0px;
+  margin: 0 4px 4px;
 }
 
 .mat-card .mat-card-content {
@@ -35,13 +39,38 @@
 }
 
 .torch-button {
-  position: sticky;
-  bottom: 3.8rem;
-  right: 3.8rem;
+  position: absolute;
+  bottom: 14.4rem;
+  right: 15.4rem;
 }
 
 .switch-button {
-  position: sticky;
-  bottom: 4.8rem;
-  right: 4.8rem;
+  position: absolute;
+  bottom: 14.4rem;
+  right: 12.8rem;
 }
+
+.close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.next-button {
+  position: absolute;
+  top: 21.4rem;
+  right: 0.6rem;
+  z-index: 1;
+}
+
+
+.ngx-scanner-qrcode {
+  display: block;
+  position: relative;
+}
+
+.ng-hide {
+  display: none;
+}
+

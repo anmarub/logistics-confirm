@@ -6,7 +6,7 @@ import {
   FormGroup, Validators
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, forkJoin, from, Observable, ReplaySubject, Subject, Subscription } from 'rxjs';
 
 import { switchMap } from 'rxjs/operators';
@@ -14,20 +14,23 @@ import { MatSelect } from '@angular/material/select';
 import { take, takeUntil } from 'rxjs/operators';
 
 import { OrderConfirmQrComponent } from '../order-confirm-qr/order-confirm-qr.component'
+import { OrderService } from 'src/app/shared/service/order.service';
+import { IOrderModel } from 'src/app/shared/model/order.model';
+import { MatTableDataSource } from '@angular/material/table';
+import { IOrderDetailsModel } from 'src/app/shared/model/orderDetails.model';
 
 @Component({
 	selector: 'app-order-confirm',
 	templateUrl: './order-confirm.component.html',
   styleUrls: ['./order-confirm.component.scss']
 })
-export class OrderConfirmComponent implements AfterViewInit {
+export class OrderConfirmComponent implements OnInit, OnDestroy {
 
-  private readonly subscriptions: Subscription[] = [];
-  public defaultTime = [new Date().getHours(), 0 , 0];
-  filteredListCustomers = []
-  totalSum!: number
+  dataSource = new MatTableDataSource<IOrderDetailsModel>();
+  totalSum!: number;
+  id!: number;
   public openMenu: boolean = false;
-  isOver = false;
+  isOver: boolean = false;
   /** control for the MatSelect filter keyword */
   public customerFilterCtrl: FormControl = new FormControl();
   protected onDestroy = new Subject<void>();
@@ -35,40 +38,24 @@ export class OrderConfirmComponent implements AfterViewInit {
 
   // create form with validators and dynamic rows array
   formOrder: FormGroup = this.fb.group({
-    orderDate: ['', [Validators.required, Validators.minLength(2)]], // ok
-    serviceDate: ['', [Validators.required, Validators.minLength(2)]], // ok
-    dateSendEmail: ['', [Validators.required, Validators.minLength(2)]],
-    statusSendEmail: [false, [Validators.required, Validators.minLength(2)]], // ok
-    note: ['', []], // ok
-    requestedBy: ['', [Validators.required, Validators.minLength(2)]], // ok
-    customerId: ['', [Validators.required, Validators.minLength(1)]], // ok
-    statusOrderId: [{value: 1, disabled: true}, [Validators.required, Validators.minLength(1)]], // ok
-
-    // load first row at start
-    detailsOrder: this.fb.array([this.getDetailsOrder()]),
+    id_order_SF: ['', [Validators.required, Validators.minLength(2)]],
+    id_order_WL: ['', [Validators.required, Validators.minLength(2)]],
+    customer_code: ['', [Validators.required, Validators.minLength(2)]],
+    customer_name: ['', []],
+    comment_confirm: ['', [Validators.required, Validators.minLength(2)]],
   });
-  // Observable for formArray value changes
-  formValueChanges$: Observable<FormArray> =
-    this.formOrder.controls.detailsOrder.valueChanges;
-
 
   constructor(
-    private currencyPipe: CurrencyPipe,
     public dialog: MatDialog,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private order: OrderService,
+    private idRoute: ActivatedRoute
   ) {}
 
-  @ViewChild('singleSelect', { static: true })
-  singleSelect!: MatSelect;
-
-  @ViewChild('selectEmployee', { static: true })
-  selectEmployee!: MatSelect;
-
   ngOnInit(): void {
-    this.formOrder.controls.serviceDate.setValue(new Date());
-    this.formOrder.controls.orderDate.setValue(new Date());
-    this.formOrder.controls.dateSendEmail.setValue(new Date());
+    this.id = this.idRoute.snapshot.params.id;
+    this.searchOrderLogistics();
   }
 
   ngOnDestroy(): void {
@@ -76,19 +63,36 @@ export class OrderConfirmComponent implements AfterViewInit {
     this.onDestroy.complete();
   }
 
-  ngAfterViewInit(): void {
-  }
-
   clickMenu(){
     this.openMenu = !this.openMenu;
   }
 
-  hello(mex: string){
-      alert('Hello '+mex+'!' );
+  searchOrderLogistics(): void {
+    this.order.getIdOrderMontacarga('01191158')
+    .subscribe({
+      next: (get_order: IOrderModel) => {
+        this.formOrder.patchValue({
+          id_order_SF: get_order.id_order_SF ?? "Sin Datos",
+          id_order_WL: get_order.id_order_WL ?? "Sin Datos",
+          customer_code: get_order.customer_code ?? "Sin Datos",
+          customer_name: get_order.customer_name ?? "Sin Datos",
+          comment_confirm: get_order.comment_confirm,
+        });
+      },
+      error: (err) => {
+        console.error(err);
+      },
+      complete: () => {
+        console.log(this.formOrder.value)
+      }
+    })
   }
 
-  scanCodeQr(): void {
-    this.dialog.open(OrderConfirmQrComponent, {panelClass: 'custom-dialog-container', disableClose: true})
+  scanCodeQr(isQrForm: boolean): void {
+    this.dialog.open(OrderConfirmQrComponent, {
+      data: isQrForm,
+      panelClass: 'custom-dialog-container',
+      disableClose: true})
     .afterClosed()
     .pipe(take(1), takeUntil(this.onDestroy))
     .subscribe({
@@ -102,108 +106,5 @@ export class OrderConfirmComponent implements AfterViewInit {
     });
     this.openMenu = false;
   }
-
-  /**
-   * Create form Details Order
-   */
-  private getDetailsOrder(): FormGroup {
-    const numberPatern = '^[0-9.,]+$';
-    return this.fb.group({
-      ordersDetailsId: [0, []],
-      startTime: ['', [Validators.required, Validators.minLength(2)]],
-      endTime: ['', [Validators.required, Validators.minLength(2)]],
-      extraTime: [0, [Validators.required, Validators.pattern(numberPatern)]],
-      qty: [1, [Validators.required, Validators.pattern(numberPatern)]],
-      Ccoste: ['', [Validators.required, Validators.minLength(1)]],
-      ordersId: ['', []],
-      note: ['', []],
-      productsPriceId: ['', [Validators.required, Validators.minLength(1)]],
-      employeeFilterCtrl: new FormControl().setValue(''),
-      employeeId: ['', [Validators.required, Validators.minLength(1)]],
-      totalHour: [0, [Validators.required, Validators.pattern(numberPatern)]],
-
-      unitTotalPrice: [0, { value: 0, disabled: true }],
-    });
-  }
-
-
-  observerFormGroup(): void {
-    // subscribe to the stream so listen to changes on units
-    const formChange = this.formValueChanges$.subscribe({
-      next: (detailsOrder: any) => {
-        this.updateTotalUnitPrice(detailsOrder);
-      },
-      error: (err) => {
-        console.error({messageError: err});
-      },
-      complete: () => {
-      }
-    });
-    this.subscriptions.push(formChange);
-  }
-  /**
-   * Add new detail order row into form
-   */
-  addDetailsOrder(): void {
-    const control = this.formOrder.controls.detailsOrder as FormArray;
-    control.push(this.getDetailsOrder());
-  }
-
-  /**
-   * Remove detail order row from form on click delete button
-   */
-  removeDetailsOrderId(id: number): void {
-    const control = this.formOrder.controls.detailsOrder as FormArray;
-    control.removeAt(id);
-  }
-
-  /**
-   * This is one of the way how clear detail order fields.
-   */
-  clearAllDetailsOrder(): void {
-    const control = this.formOrder.controls.detailsOrder as FormArray;
-    while (control.length) {
-      control.removeAt(control.length - 1);
-    }
-    control.clearValidators();
-    control.push(this.getDetailsOrder());
-  }
-
-  // get details Order form array control
-  getControls(): AbstractControl[] {
-    return (this.formOrder.get('detailsOrder') as FormArray).controls;
-  }
-
-
-
-
-  /**
-   * Update prices as soon as something changed on detail order group.
-   */
-  private updateTotalUnitPrice(units: any): void {
-
-  // get our details group control
-  const control = this.formOrder.controls.detailsOrder as FormArray;
-
-  for (const i in units) {
-    if (units.hasOwnProperty(i)) {
-      const totalPayRoll = 0;
-      // now format total price with angular currency pipe
-      const totalUnitPriceFormatted = this.currencyPipe.transform(
-        totalPayRoll,
-        'USD',
-        'symbol-narrow',
-        '1.2-2'
-      );
-      // update total sum field on unit and do not emit event myFormValueChanges$ in this case on units
-      control.at(+i).patchValue(
-          { unitTotalPrice: totalUnitPriceFormatted},
-          { onlySelf: true, emitEvent: false }
-        );
-      // update total price for all units
-      this.totalSum += totalPayRoll;
-    }
-  }
-}
 
 }

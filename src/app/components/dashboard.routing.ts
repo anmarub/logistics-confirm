@@ -4,7 +4,7 @@ import { OrderConfirmComponent } from './order-confirm/order-confirm.component';
 
 export const DashboardRoutes: Routes = [
   {
-  path: '',
+  path: '', //path: 'order-edit/:id',
   component: OrderConfirmComponent
   }
 ];

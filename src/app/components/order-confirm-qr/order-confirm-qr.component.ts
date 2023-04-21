@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   ScannerQRCodeConfig,
   ScannerQRCodeSelectedFiles,
@@ -8,7 +8,7 @@ import {
   ScannerQRCodeResult,
   NgxScannerQrcodeComponent
 } from 'ngx-scanner-qrcode';
-import { delay } from 'rxjs';
+import { IOrderDetailsModel } from 'src/app/shared/model/orderDetails.model';
 
 @Component({
   selector: 'app-order-confirm-qr',
@@ -35,23 +35,31 @@ export class OrderConfirmQrComponent implements OnInit, OnDestroy {
   public qrCodeResult: ScannerQRCodeSelectedFiles[] = [];
   public qrCodeResult2: ScannerQRCodeSelectedFiles[] = [];
   @ViewChild('action', { static: true }) action!: NgxScannerQrcodeComponent;
+  isQrForm!: boolean;
+  private confirmOrderDetial: IOrderDetailsModel[] = []
 
   // create form with validators and dynamic rows array
   formOrderConfirm: FormGroup = this.fb.group({
-    order_id: ['', [Validators.required, Validators.minLength(1)]],
-    type_cil_order: ['', [Validators.required, Validators.minLength(5)]],
-    code_cil_order: ['', [Validators.required, Validators.minLength(2)]],
-    qty_cil_order: [false, [Validators.required, Validators.minLength(1)]],
-    qty_kg_order: ['', [Validators.max(0)]],
+    order_id: [0, [Validators.required]],
+    type_cil_order: ['', [Validators.required]],
+    code_cil_order: ['', [Validators.required]],
+    qty_cil_order: [1, [Validators.required]],
+    tara_cil_order: ['', [Validators.required]],
+    qty_kg_order: ['', [Validators.required, Validators.min(0)]],
   });
 
   constructor(private qrcode: NgxScannerQrcodeService,
               public dialogQr: MatDialogRef<OrderConfirmQrComponent>,
+              @Inject(MAT_DIALOG_DATA) private validFormQr: boolean,
               private fb: FormBuilder
               ) { }
 
   ngOnInit(): void {
-    this.action.start();
+    this.isQrForm = this.validFormQr;
+
+      if (this.isQrForm) {
+        this.action.start();
+      }
   }
 
   ngOnDestroy(): void {
@@ -61,9 +69,36 @@ export class OrderConfirmQrComponent implements OnInit, OnDestroy {
   public onEvent(e: ScannerQRCodeResult[]): void {
     if (e.length > 0) {
       this.action.stop()
-      this.formOrderConfirm.controls.qty_kg_order.reset
-      console.log(e);
+      const dataQr: IOrderDetailsModel = JSON.parse(e[0].value)
+      this.formOrderConfirm.patchValue({
+        id_detail: 1,
+        type_cil_order: dataQr.type_cil_order,
+        code_cil_order: dataQr.code_cil_order,
+        qty_cil_order: "1",
+        tara_cil_order: dataQr.tara_cil_order
+      })
+      this.formOrderConfirm.controls.type_cil_order.disable();
+      this.formOrderConfirm.controls.code_cil_order.disable();
+
+      console.log(dataQr);
     }
+  }
+
+  nextScanQr(): void {
+    if(this.formOrderConfirm.valid) {
+      const newScan: IOrderDetailsModel = {
+        id_detail: this.formOrderConfirm.controls.order_id.value,
+        code_cil_order: this.formOrderConfirm.controls.code_cil_order.value,
+        type_cil_order: this.formOrderConfirm.controls.type_cil_order.value,
+        tara_cil_order: this.formOrderConfirm.controls.tara_cil_order.value,
+        qty_cil_order: this.formOrderConfirm.controls.qty_cil_order.value,
+        kg_cil_order: this.formOrderConfirm.controls.qty_kg_order.value
+      }
+      this.confirmOrderDetial.push(newScan);
+      this.formOrderConfirm.reset();
+    }
+    this.action.start();
+
   }
 
   public handle(action: NgxScannerQrcodeComponent, fn: keyof NgxScannerQrcodeComponent): void {
@@ -76,22 +111,17 @@ export class OrderConfirmQrComponent implements OnInit, OnDestroy {
 
     if (cameraActive > 0 && cameraActive <= lenCameraDevices) {
       this.action.deviceActive = cameraActive + 1;
-      console.log(this.action.deviceActive)
     } else {
       this.action.deviceActive = 1;
-      console.log(this.action.deviceActive)
     }
   }
 
-
-
-
-  /*confirmDialogQr(): void {
-    this.dialogQr.close()
+  confirmDialogQr(): void {
+    this.dialogQr.close(this.confirmOrderDetial);
   }
 
   rejectDialogQr(): void {
-    this.dialogQr.close(false)
-  }*/
+    this.dialogQr.close(this.confirmOrderDetial);
+  }
 
 }
