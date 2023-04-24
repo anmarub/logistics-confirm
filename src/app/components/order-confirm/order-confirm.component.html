@@ -6,78 +6,210 @@
       <mat-card-header class="order-card">
         <div mat-card-avatar class="order-header-image"></div>
         <mat-card-title><a><b>N° Pedido:</b></a></mat-card-title>
-        <mat-card-subtitle> 01184018 </mat-card-subtitle>
+        <mat-card-subtitle> {{ formOrder.controls.id_order_SF.value }} </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content class="order-card">
-        <!--{{ formOrder.get('note')?.value }}-->
         <p><b>Codigo Cliente:</b><br> {{ formOrder.controls.customer_code.value }}
           <br><b>Nombre Cliente:</b><br> {{ formOrder.controls.customer_name.value }}
-          <br><b>Detalle del Pedido:</b><br> CIL 18 KG MONTACARGA
         </p>
       </mat-card-content>
+      <mat-spinner class="loading-indicator" color="primary" [diameter]="50" *ngIf="isLoading"></mat-spinner>
     </mat-card>
 
     <!-- Start form units array with first row must and dynamically add more -->
-    <mat-card>
-      <mat-card-content>
-        <mat-card-title></mat-card-title>
-        <mat-card-subtitle>Datos Confirmacion Entrega</mat-card-subtitle>
+    <mat-card class="order-card">
+      <mat-tab-group dynamicHeight>
+        <mat-tab label="Pedido">
+          <div class="example-small-box">
+            <mat-card-content class="order-card">
+
+              <div class="example-container">
+                <mat-table #table [dataSource]="dataSourceOrder">
+                  <!-- Position Column -->
+                  <ng-container matColumnDef="reference">
+                    <mat-header-cell *matHeaderCellDef>Referencia</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                      <span class="mobile-label">Ref:</span>
+                      {{element.type_cil_order}}
+                    </mat-cell>
+                  </ng-container>
+                  <!-- Name Column -->
+                  <ng-container matColumnDef="qty_cil_order">
+                    <mat-header-cell *matHeaderCellDef>Cant CIL Pedido</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                      <span class="mobile-label">Cant CIL:</span>
+                      {{element.qty_cil_order}}
+                    </mat-cell>
+                  </ng-container>
+
+                  <!-- Weight Column -->
+                  <ng-container matColumnDef="qyt_cil_confirm">
+                    <mat-header-cell *matHeaderCellDef>Cant CIL Entregado</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                      <span class="mobile-label">Cant CIL Ent:</span>
+                      {{element.qty_cil_confirm ?? 0}}
+                    </mat-cell>
+                  </ng-container>
+
+                  <!-- Weight Column -->
+                  <ng-container matColumnDef="total_weight">
+                    <mat-header-cell *matHeaderCellDef>Total Kg Entregados</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                      <span class="mobile-label">T. Kg Ent:</span>
+                      {{element.kg_cil_Confirm ?? 0}}
+                    </mat-cell>
+                  </ng-container>
+
+                  <mat-header-row *matHeaderRowDef="displayedColumnsOrder"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: displayedColumnsOrder;"></mat-row>
+                </mat-table>
+              </div>
 
 
 
+            </mat-card-content>
+            <div>
+              <mat-card-actions fxFlexAlign="end" align="end">
+                <button [disabled]="formOrder.invalid" mat-raised-button class="mat-success" type="submit" color="primary"
+                  matTooltip="Guardar">
+                  <mat-icon>save</mat-icon>
+                  <span>Guardar</span>
+                </button>
+                <button routerLink="/admin/orders/list" mat-raised-button color="warn" matTooltip="Cancelar">
+                  <mat-icon>cancel</mat-icon>
+                  <span>Cancelar</span>
+                </button>
+                <!-- floating capture button -->
+                <div class="dialog_scrim" *ngIf="openMenu">
+                </div>
 
-      </mat-card-content>
+                <button mat-fab color="accent" (click)="clickMenu()" class="menu-button" [class.mat-elevation-z2]="!isOver"
+                  [class.mat-elevation-z8]="isOver" (mouseover)="isOver = true" (mouseleave)="isOver = false">
+                  <i class="material-icons" *ngIf="!openMenu">add</i>
+                  <i class="material-icons" *ngIf="openMenu">close</i>
+                </button>
 
-      <!-- End form units array -->
-      <br />
-      <br />
-      <!-- Total price calculation formated with angular currency pipe -->
+                <!-- menu button -->
+                <button mat-mini-fab class="action-button one mat-elevation-z8" *ngIf="openMenu" color="basic"
+                  (click)="scanCodeQr(true)">
+                  <i class="material-icons">qr_code_scanner</i>
+                </button>
+
+                <button mat-raised-button class="label labelone mat-elevation-z8" *ngIf="openMenu" color="basic"
+                  (click)="scanCodeQr(true)">
+                  Digitalizar
+                </button>
+
+                <button mat-mini-fab class="action-button two mat-elevation-z8" *ngIf="openMenu" color="basic"
+                  (click)="scanCodeQr(false)">
+                  <i class="material-icons">edit_note</i>
+                </button>
+                <button mat-raised-button class="label labeltwo mat-elevation-z8" *ngIf="openMenu" color="basic"
+                  (click)="scanCodeQr(false)">
+                  Manual
+                </button>
+                <!-- end floating capture button -->
+              </mat-card-actions>
+            </div>
+          </div>
+        </mat-tab>
+        <mat-tab label="Entrega">
+          <div class="example-large-box">
+            <mat-card-content class="order-card">
+              <mat-card-title></mat-card-title>
+
+              <div class="example-container">
+                <mat-table #table [dataSource]="dataSourceConfirm">
+
+                  <!-- Position Column -->
+                  <ng-container matColumnDef="code">
+                    <mat-header-cell *matHeaderCellDef>Codigo</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                      <span class="mobile-label">Cod:</span>
+                      {{element.code_cil_order}}
+                    </mat-cell>
+                  </ng-container>
+
+                  <!-- Name Column -->
+                  <ng-container matColumnDef="reference">
+                    <mat-header-cell *matHeaderCellDef>Referencia</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                      <span class="mobile-label">Ref:</span>
+                      {{element.type_cil_order}}
+                    </mat-cell>
+                  </ng-container>
+
+                  <!-- Weight Column -->
+                  <ng-container matColumnDef="weight">
+                    <mat-header-cell *matHeaderCellDef> Peso (Kg) </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                      <span class="mobile-label">Kg:</span>
+                      {{element.kg_cil_order}}
+                    </mat-cell>
+                  </ng-container>
+
+                  <mat-header-row *matHeaderRowDef="displayedColumnsConfirm"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: displayedColumnsConfirm;"></mat-row>
+                </mat-table>
+              </div>
+
+
+
+            </mat-card-content>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Devoluciones">
+          <div class="example-large-box">
+            <mat-card-content class="order-card">
+              <mat-card-title></mat-card-title>
+
+              <div class="example-container">
+                <mat-table #table [dataSource]="dataSourceConfirm">
+
+                  <!-- Position Column -->
+                  <ng-container matColumnDef="code">
+                    <mat-header-cell *matHeaderCellDef>Codigo</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                      <span class="mobile-label">Cod:</span>
+                      {{element.code_cil_order}}
+                    </mat-cell>
+                  </ng-container>
+
+                  <!-- Name Column -->
+                  <ng-container matColumnDef="reference">
+                    <mat-header-cell *matHeaderCellDef>Referencia</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                      <span class="mobile-label">Ref:</span>
+                      {{element.type_cil_order}}
+                    </mat-cell>
+                  </ng-container>
+
+                  <!-- Weight Column -->
+                  <ng-container matColumnDef="weight">
+                    <mat-header-cell *matHeaderCellDef> Peso (Kg) </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                      <span class="mobile-label">Kg:</span>
+                      {{element.kg_cil_order}}
+                    </mat-cell>
+                  </ng-container>
+
+                  <mat-header-row *matHeaderRowDef="displayedColumnsConfirm"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: displayedColumnsConfirm;"></mat-row>
+                </mat-table>
+              </div>
+
+
+
+            </mat-card-content>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+
       <div>
         <mat-label>Total Orden {{ totalSum | currency:'USD':'symbol-narrow':'1.2-2'}}</mat-label>
       </div>
-      <div>
-        <mat-card-actions fxFlexAlign="end" align="end">
-          <button [disabled]="formOrder.invalid" mat-raised-button class="mat-success" type="submit" color="primary"
-            matTooltip="Guardar">
-            <mat-icon>save</mat-icon>
-            <span>Guardar</span>
-          </button>
-          <button routerLink="/admin/orders/list" mat-raised-button color="warn" matTooltip="Cancelar">
-            <mat-icon>cancel</mat-icon>
-            <span>Cancelar</span>
-          </button>
-          <!-- floating capture button -->
-          <div class="dialog_scrim" *ngIf="openMenu">
-          </div>
 
-          <button mat-fab color="accent" (click)="clickMenu()" class="menu-button" [class.mat-elevation-z2]="!isOver"
-            [class.mat-elevation-z8]="isOver" (mouseover)="isOver = true" (mouseleave)="isOver = false">
-            <i class="material-icons" *ngIf="!openMenu">add</i>
-            <i class="material-icons" *ngIf="openMenu">close</i>
-          </button>
-
-          <!-- menu button -->
-          <button mat-mini-fab class="action-button one mat-elevation-z8" *ngIf="openMenu" color="basic"
-            (click)="scanCodeQr(true)">
-            <i class="material-icons">qr_code_scanner</i>
-          </button>
-
-          <button mat-raised-button class="label labelone mat-elevation-z8" *ngIf="openMenu" color="basic"
-            (click)="scanCodeQr(true)">
-            Digitalizar
-          </button>
-
-          <button mat-mini-fab class="action-button two mat-elevation-z8" *ngIf="openMenu" color="basic"
-            (click)="scanCodeQr(false)">
-            <i class="material-icons">edit_note</i>
-          </button>
-          <button mat-raised-button class="label labeltwo mat-elevation-z8" *ngIf="openMenu" color="basic"
-            (click)="scanCodeQr(false)">
-            Manual
-          </button>
-          <!-- end floating capture button -->
-        </mat-card-actions>
-      </div>
     </mat-card>
   </form>
   <!-- Page form end -->

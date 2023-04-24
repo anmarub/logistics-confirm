@@ -9,6 +9,7 @@ import {
   NgxScannerQrcodeComponent
 } from 'ngx-scanner-qrcode';
 import { IOrderDetailsModel } from 'src/app/shared/model/orderDetails.model';
+import { IQrDetailsModel } from 'src/app/shared/model/qrDetails.model';
 
 @Component({
   selector: 'app-order-confirm-qr',
@@ -56,6 +57,8 @@ export class OrderConfirmQrComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.isQrForm = this.validFormQr;
+    this.formOrderConfirm.controls.type_cil_order.disable();
+    this.formOrderConfirm.controls.code_cil_order.disable();
 
       if (this.isQrForm) {
         this.action.start();
@@ -69,18 +72,14 @@ export class OrderConfirmQrComponent implements OnInit, OnDestroy {
   public onEvent(e: ScannerQRCodeResult[]): void {
     if (e.length > 0) {
       this.action.stop()
-      const dataQr: IOrderDetailsModel = JSON.parse(e[0].value)
+      const dataQr: IQrDetailsModel = JSON.parse(e[0].value)
       this.formOrderConfirm.patchValue({
-        id_detail: 1,
-        type_cil_order: dataQr.type_cil_order,
-        code_cil_order: dataQr.code_cil_order,
+        order_id: 1,
+        type_cil_order: dataQr.referencia,
+        code_cil_order: dataQr.codigo,
         qty_cil_order: "1",
-        tara_cil_order: dataQr.tara_cil_order
-      })
-      this.formOrderConfirm.controls.type_cil_order.disable();
-      this.formOrderConfirm.controls.code_cil_order.disable();
-
-      console.log(dataQr);
+        tara_cil_order: dataQr.tara
+      });
     }
   }
 
