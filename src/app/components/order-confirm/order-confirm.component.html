@@ -29,7 +29,7 @@
                   <ng-container matColumnDef="reference">
                     <mat-header-cell *matHeaderCellDef>Referencia</mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                      <span class="mobile-label">Ref:</span>
+                      <span class="mobile-label">Referencia:</span>
                       {{element.type_cil_order}}
                     </mat-cell>
                   </ng-container>
@@ -37,16 +37,16 @@
                   <ng-container matColumnDef="qty_cil_order">
                     <mat-header-cell *matHeaderCellDef>Cant CIL Pedido</mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                      <span class="mobile-label">Cant CIL:</span>
+                      <span class="mobile-label">Cant Cilindros Pedido:</span>
                       {{element.qty_cil_order}}
                     </mat-cell>
                   </ng-container>
 
                   <!-- Weight Column -->
                   <ng-container matColumnDef="qyt_cil_confirm">
-                    <mat-header-cell *matHeaderCellDef>Cant CIL Entregado</mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef>Total CIL Entregado</mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                      <span class="mobile-label">Cant CIL Ent:</span>
+                      <span class="mobile-label">Total Cilindros Entregados:</span>
                       {{element.qty_cil_confirm ?? 0}}
                     </mat-cell>
                   </ng-container>
@@ -60,9 +60,22 @@
                     </mat-cell>
                   </ng-container>
 
+                  <!-- Weight Column -->
+                  <ng-container matColumnDef="total_weight_return">
+                    <mat-header-cell *matHeaderCellDef>Total Kg Devueltos</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                      <span class="mobile-label">Total Kg Devueltos:</span>
+                      {{element.kg_cil_Return ?? 0}}
+                    </mat-cell>
+                  </ng-container>
+
                   <mat-header-row *matHeaderRowDef="displayedColumnsOrder"></mat-header-row>
                   <mat-row *matRowDef="let row; columns: displayedColumnsOrder;"></mat-row>
                 </mat-table>
+                <mat-form-field>
+                  <mat-label>Comentarios</mat-label>
+                  <textarea matInput formControlName="comment_confirm" placeholder="Registre las novedades del pedido"></textarea>
+                </mat-form-field>
               </div>
 
 
@@ -70,7 +83,7 @@
             </mat-card-content>
             <div>
               <mat-card-actions fxFlexAlign="end" align="end">
-                <button [disabled]="formOrder.invalid" mat-raised-button class="mat-success" type="submit" color="primary"
+                <button mat-raised-button class="mat-success" type="submit" color="primary" (click)="saveOrder()"
                   matTooltip="Guardar">
                   <mat-icon>save</mat-icon>
                   <span>Guardar</span>
@@ -125,31 +138,35 @@
                   <ng-container matColumnDef="code">
                     <mat-header-cell *matHeaderCellDef>Codigo</mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                      <span class="mobile-label">Cod:</span>
-                      {{element.code_cil_order}}
+                      <span class="mobile-label-confirm">Cod:</span>
+                      {{element.code_cil_confirm}}
                     </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                   </ng-container>
 
                   <!-- Name Column -->
                   <ng-container matColumnDef="reference">
                     <mat-header-cell *matHeaderCellDef>Referencia</mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                      <span class="mobile-label">Ref:</span>
-                      {{element.type_cil_order}}
+                      <span class="mobile-label-confirm">Ref:</span>
+                      {{element.type_cil_confirm}}
                     </mat-cell>
+                    <mat-footer-cell *matFooterCellDef>Total Kg </mat-footer-cell>
                   </ng-container>
 
                   <!-- Weight Column -->
                   <ng-container matColumnDef="weight">
                     <mat-header-cell *matHeaderCellDef> Peso (Kg) </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                      <span class="mobile-label">Kg:</span>
-                      {{element.kg_cil_order}}
+                      <span class="mobile-label-confirm">Kg:</span>
+                      {{element.kg_cil_Confirm}}
                     </mat-cell>
+                    <mat-footer-cell *matFooterCellDef>{{ getTotalKgConfirm() | number }}</mat-footer-cell>
                   </ng-container>
 
                   <mat-header-row *matHeaderRowDef="displayedColumnsConfirm"></mat-header-row>
                   <mat-row *matRowDef="let row; columns: displayedColumnsConfirm;"></mat-row>
+                  <mat-footer-row *matFooterRowDef="displayedColumnsConfirm"></mat-footer-row>
                 </mat-table>
               </div>
 
@@ -165,37 +182,41 @@
               <mat-card-title></mat-card-title>
 
               <div class="example-container">
-                <mat-table #table [dataSource]="dataSourceConfirm">
+                <mat-table #table [dataSource]="dataSourceRefund">
 
                   <!-- Position Column -->
                   <ng-container matColumnDef="code">
                     <mat-header-cell *matHeaderCellDef>Codigo</mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                      <span class="mobile-label">Cod:</span>
-                      {{element.code_cil_order}}
+                      <span class="mobile-label-confirm">Cod:</span>
+                      {{element.code_cil_confirm}}
                     </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                   </ng-container>
 
                   <!-- Name Column -->
                   <ng-container matColumnDef="reference">
                     <mat-header-cell *matHeaderCellDef>Referencia</mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                      <span class="mobile-label">Ref:</span>
-                      {{element.type_cil_order}}
+                      <span class="mobile-label-confirm">Ref:</span>
+                      {{element.type_cil_confirm}}
                     </mat-cell>
+                    <mat-footer-cell *matFooterCellDef>Total Kg </mat-footer-cell>
                   </ng-container>
 
                   <!-- Weight Column -->
                   <ng-container matColumnDef="weight">
                     <mat-header-cell *matHeaderCellDef> Peso (Kg) </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                      <span class="mobile-label">Kg:</span>
-                      {{element.kg_cil_order}}
+                      <span class="mobile-label-confirm">Kg:</span>
+                      {{element.kg_cil_Confirm}}
                     </mat-cell>
+                    <mat-footer-cell *matFooterCellDef>{{ getTotalKgRefuse() | number }}</mat-footer-cell>
                   </ng-container>
 
                   <mat-header-row *matHeaderRowDef="displayedColumnsConfirm"></mat-header-row>
                   <mat-row *matRowDef="let row; columns: displayedColumnsConfirm;"></mat-row>
+                  <mat-footer-row *matFooterRowDef="displayedColumnsConfirm"></mat-footer-row>
                 </mat-table>
               </div>
 
@@ -205,11 +226,6 @@
           </div>
         </mat-tab>
       </mat-tab-group>
-
-      <div>
-        <mat-label>Total Orden {{ totalSum | currency:'USD':'symbol-narrow':'1.2-2'}}</mat-label>
-      </div>
-
     </mat-card>
   </form>
   <!-- Page form end -->

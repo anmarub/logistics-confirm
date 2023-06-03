@@ -17,21 +17,23 @@ export class OrderService {
     return this.http.get<IOrderModel>(`${this.url}/api/order/${id}`, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
       }),
       withCredentials: true,
     });
   }
 
-  addAddress(address: IOrderModel): Observable<IOrderModel> {
-    return this.http.post<IOrderModel>(`${this.url}/api/order/`, address, {
+  addOrder(order: IOrderModel): Observable<IOrderModel> {
+    return this.http.post<IOrderModel>(`${this.url}/api/order`, order, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),
+      withCredentials: true,
     });
   }
 
-  updateAddress(address: IOrderModel, addressId: number): Observable<IOrderModel> {
-    return this.http.put<IOrderModel>(`${this.url}/api/order/${addressId}`, address, {
+  updateOrder(order: IOrderModel, orderId: number): Observable<IOrderModel> {
+    return this.http.put<IOrderModel>(`${this.url}/api/order/${orderId}`, order, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),

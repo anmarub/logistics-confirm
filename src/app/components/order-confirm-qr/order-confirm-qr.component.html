@@ -1,15 +1,19 @@
 <div class="container">
   <mat-card class="dialogQr">
-    <button mat-icon-button class="close-button" (click)="rejectDialogQr()">
+    <button mat-icon-button class="close-button" (click)="closeDialogQr()">
       <mat-icon class="close-icon" color="warn">close</mat-icon>
     </button>
     <form [formGroup]="formOrderConfirm" novalidate>
       <mat-card-content class="dialogQr">
+        <section class="example-section">
+          <mat-slide-toggle class=".type-move-on" [ngClass]="{'type-move-off': !formOrderConfirm.controls.type_move.value}" formControlName="type_move">{{ formOrderConfirm.controls.type_move.value ? 'Entrega' : 'Devolución'}}</mat-slide-toggle>
+        </section>
         <!-- ngx-scanner-qrcode -->
         <ngx-scanner-qrcode class="ngx-scanner-qrcode" [ngClass]="{'ng-hide': !isQrForm}" #action="scanner" [config]="config" (event)="onEvent($event)"></ngx-scanner-qrcode>
         <!-- loading -->
         <mat-spinner class="loading-indicator" color="primary" [diameter]="36" *ngIf="action.isLoading"></mat-spinner>
         <!-- devices -->
+        <div fxFlexAlign="end" align="end">
         <button class="switch-button" mat-mini-fab color="primary" [disabled]="!action.isStart"
           (click)="switchCamera()">
           <mat-icon>cameraswitch</mat-icon>
@@ -19,33 +23,36 @@
           (click)="action.isTorch = !action.isTorch; handle(action, 'torcher')">
           <mat-icon>{{ action.isTorch ? 'flash_off' : 'flash_on' }}</mat-icon>
         </button>
-
+      </div>
+      <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="3.5%" fxLayoutAlign="center" layout-margin>
         <mat-form-field>
           <mat-label>Codigo</mat-label>
-          <input matInput type="text" formControlName="code_cil_order">
+          <input matInput type="text" formControlName="code_cil_order" [readonly]="isQrForm" required>
+          <mat-error *ngIf="formOrderConfirm.controls.code_cil_order.invalid">Codigo de Cilindro Duplicado</mat-error>
         </mat-form-field>
 
         <mat-form-field>
           <mat-label>Referencia</mat-label>
-          <input matInput type="text" formControlName="type_cil_order">
+          <input matInput type="text" formControlName="type_cil_order" [readonly]="isQrForm" required>
         </mat-form-field>
-
-        <mat-form-field>
+        <div class="form-wrapper">
+        <mat-form-field class="full-width" fxFlex="50%">
           <mat-label>Cantidad Kg</mat-label>
-          <input matInput type="text" formControlName="qty_kg_order" cdkFocusInitial>
+          <input matInput type="number" formControlName="qty_kg_order" cdkFocusInitial>
           <button *ngIf="formOrderConfirm.controls.qty_kg_order.valid" matSuffix mat-icon-button aria-label="Clear"
-            (click)="formOrderConfirm.controls.qty_kg_order.reset()">
+            (click)="formOrderConfirm.controls.qty_kg_order.reset()" #input OnlyNumber="true">
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>
-
-      </mat-card-content>
-      <mat-card-actions>
-        <!-- New unit button -->
-        <button class="next-button" *ngIf="formOrderConfirm.valid" mat-mini-fab color="primary" matTooltip="Siguiente" (click)="nextScanQr()">
+        <button class="next-button" mat-raised-button color="primary" [disabled]="formOrderConfirm.invalid" (click)="nextScanQr(false)" matTooltip="Siguiente">
           <mat-icon>skip_next</mat-icon>
         </button>
-      </mat-card-actions>
+        <button class="next-button" mat-raised-button color="primary" [disabled]="formOrderConfirm.invalid" (click)="nextScanQr(true)" matTooltip="Guardar y Cerrar">
+          <mat-icon>save</mat-icon>
+        </button>
+        </div>
+      </div>
+      </mat-card-content>
     </form>
   </mat-card>
 </div>

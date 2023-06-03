@@ -14,7 +14,7 @@ export const AppRoutes: Routes = [
       },
       {
         path: 'montacargas',
-        loadChildren: () => import('./components/dashboard.module').then(m => m.DashboardModule)
+        loadChildren: () => import('./components/components.module').then(m => m.ComponentsModule)
       }
     ]
   }

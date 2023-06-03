@@ -125,6 +125,12 @@ td, th {
 
 @media(max-width: 600px) {
   .mobile-label {
+    width: 160px;
+    display: inline-block;
+        font-weight: bold;
+  }
+
+  .mobile-label-confirm {
     width: 80px;
     display: inline-block;
         font-weight: bold;
@@ -150,6 +156,10 @@ td, th {
 
   .mat-cell, .mat-footer-cell {
     font-size: 12px;
+  }
+
+  .mat-footer-row {
+    font-weight: bold;
   }
 }
 
@@ -185,5 +195,9 @@ td, th {
   width: 100%;
   height: 100%;
   background-color: rgba(0,0,0,0.3);
+}
+
+.mat-footer-row {
+  font-weight: bold;
 }
 

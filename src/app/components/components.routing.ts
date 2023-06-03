@@ -2,9 +2,9 @@ import { Routes } from '@angular/router';
 
 import { OrderConfirmComponent } from './order-confirm/order-confirm.component';
 
-export const DashboardRoutes: Routes = [
+export const ComponentsRoutes: Routes = [
   {
-  path: '', //path: 'order-edit/:id',
+    path: 'order-edit/:id',
   component: OrderConfirmComponent
   }
 ];

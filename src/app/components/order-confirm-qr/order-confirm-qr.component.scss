@@ -38,16 +38,18 @@
   line-height: 0px
 }
 
+.mat-card-actions, .mat-card-subtitle, .mat-card-content {
+  display: block;
+  margin-bottom: 0px;
+  padding: 0pc;
+}
+
 .torch-button {
-  position: absolute;
-  bottom: 14.4rem;
-  right: 15.4rem;
+  position: inherit;
 }
 
 .switch-button {
-  position: absolute;
-  bottom: 14.4rem;
-  right: 12.8rem;
+  position: inherit;
 }
 
 .close-button {
@@ -57,11 +59,17 @@
   z-index: 1;
 }
 
+.form-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.full-width {
+  width: 150px;
+}
+
 .next-button {
-  position: absolute;
-  top: 21.4rem;
-  right: 0.6rem;
-  z-index: 1;
+  margin-left: 8px;
 }
 
 
@@ -74,3 +82,36 @@
   display: none;
 }
 
+
+// check controls
+
+.example-section {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  height: 60px;
+}
+
+.mat-slide-toggle {
+  display: inline-block;
+  height: 24px;
+  max-width: 100%;
+  line-height: 24px;
+  white-space: nowrap;
+  outline: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  background: #77dd77;
+}
+
+.type-move-off {
+  background: #ff6961;
+}
+
+.full-width {
+  width: 50%;
+}
+
+::ng-deep .custom-style{
+  background-color:brown;
+  color:white;
+}

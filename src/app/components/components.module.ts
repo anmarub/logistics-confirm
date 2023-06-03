@@ -9,9 +9,8 @@ import { NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
 
 import { MaterialModule } from '../material-module';
 import { OrderConfirmComponent } from './order-confirm/order-confirm.component';
-import { DashboardRoutes } from './dashboard.routing';
+import { ComponentsRoutes } from './components.routing';
 import { OrderConfirmQrComponent } from './order-confirm-qr/order-confirm-qr.component';
-import { OrderConfirmFormComponent } from './order-confirm-form/order-confirm-form.component';
 
 @NgModule({
   imports: [
@@ -23,15 +22,14 @@ import { OrderConfirmFormComponent } from './order-confirm-form/order-confirm-fo
     ReactiveFormsModule,
     CdkTableModule,
     NgxScannerQrcodeModule,
-    RouterModule.forChild(DashboardRoutes)
+    RouterModule.forChild(ComponentsRoutes)
   ],
   declarations: [
     OrderConfirmComponent,
-    OrderConfirmQrComponent,
-    OrderConfirmFormComponent
+    OrderConfirmQrComponent
   ],
   providers: [
     CurrencyPipe,
   ]
 })
-export class DashboardModule {}
+export class ComponentsModule {}
