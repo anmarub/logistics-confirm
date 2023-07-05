@@ -87,7 +87,7 @@ export class OrderConfirmComponent implements OnInit, OnDestroy {
   }
 
   searchOrderLogistics(): void {
-    // '01219852'
+    // '01219852' 01232028
     this.order.getIdOrderMontacarga(this.id)
     .subscribe({
       next: (get_order: IOrderModel) => {
@@ -235,7 +235,7 @@ export class OrderConfirmComponent implements OnInit, OnDestroy {
         console.error(err);
       },
       complete: () => {
-        //this.saveDetails(idOrder);
+        this.saveDetails(idOrder);
         this.saveConfirm(idOrder);
       }
     });

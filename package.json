@@ -1,11 +1,11 @@
 {
   "name": "logistics-gasco",
-  "version": "0.0.2",
+  "version": "0.0.8",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "prebuild": "npm --no-git-tag-version version patch",
-    "build": "npm version patch && ng build --configuration production --aot",
+    "build": "ng build --configuration production --aot",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

@@ -6,5 +6,5 @@
 export const environment = {
   appVersion: '001-dev', // packageJson.version,
   production: true,
-  API_URL: 'http://127.0.0.1:8000'
+  API_URL: 'https://191.101.233.242:8080'
 };
