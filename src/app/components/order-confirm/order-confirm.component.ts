@@ -141,6 +141,7 @@ export class OrderConfirmComponent implements OnInit, OnDestroy {
         console.error(err);
       },
       complete: () => {
+        console.log(this.dataSourceConfirm.data);
         this.TotalRefKgConfirm = this.gruopDatadelivery(this.dataSourceConfirm.data);
         this.TotalRefKgRefund = this.gruopDatadelivery(this.dataSourceRefund.data);
         this.dataSourceOrder.data = this.totalAmountOrderConfirm();
@@ -297,6 +298,10 @@ export class OrderConfirmComponent implements OnInit, OnDestroy {
       error: () => {},
       complete: () => {}
     });
+  }
+
+  closeOpenedWindow(): void {
+    window.close();
   }
 
 }

@@ -88,7 +88,7 @@
                   <mat-icon>save</mat-icon>
                   <span>Guardar</span>
                 </button>
-                <button routerLink="/admin/orders/list" mat-raised-button color="warn" matTooltip="Cancelar">
+                <button mat-raised-button color="warn" matTooltip="Cancelar" (click)="closeOpenedWindow()">
                   <mat-icon>cancel</mat-icon>
                   <span>Cancelar</span>
                 </button>
@@ -159,7 +159,7 @@
                     <mat-header-cell *matHeaderCellDef> Peso (Kg) </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                       <span class="mobile-label-confirm">Kg:</span>
-                      {{element.kg_cil_Confirm}}
+                      {{element.kg_cil_confirm}}
                     </mat-cell>
                     <mat-footer-cell *matFooterCellDef>{{ getTotalKgConfirm() | number }}</mat-footer-cell>
                   </ng-container>
